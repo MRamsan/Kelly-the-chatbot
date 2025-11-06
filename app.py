@@ -13,7 +13,6 @@ if "OPENAI_API_KEY" not in st.secrets:
     st.error("⚠️ Please add your OpenAI API key in Streamlit Secrets (Settings → Secrets).")
 else:
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-
     # --- User Input ---
     topic = st.text_area("💭 Enter a topic or question for Kelly to write a poem about:")
 
@@ -44,6 +43,7 @@ End each poem with a thought-provoking insight.
                 poem = response.choices[0].message.content.strip()
                 st.markdown("### 🎓 Kelly’s Poem:")
                 st.markdown(f"_{poem}_")
+
 
 
 
