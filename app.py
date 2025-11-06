@@ -1,22 +1,25 @@
 # app.py
-import openai
 import streamlit as st
+from openai import OpenAI
+import os
+from dotenv import load_dotenv
 
-# --- Streamlit UI ---
+# Load API key from .env (optional)
+load_dotenv()
+
+# Initialize OpenAI client
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 st.set_page_config(page_title="Kelly - The AI Scientist Poet", page_icon="🤖📜")
 st.title("🤖 Kelly — The AI Scientist Poet")
 
-st.write(
-    """
-    *Ask Kelly about anything — science, love, art, AI, or human nature.*
-    She will respond with a **poem**: skeptical, analytical, and beautifully reasoned.
-    """
-)
+st.write("""
+*Ask Kelly about anything — science, art, AI, or human nature.*  
+She will respond with a **poem**: skeptical, analytical, and beautifully reasoned.
+""")
 
-# --- User Input ---
 topic = st.text_area("Enter a topic or question for Kelly:")
 
-# --- Generate Poem ---
 if st.button("Ask Kelly"):
     if topic.strip():
         system_prompt = """
@@ -26,11 +29,12 @@ if st.button("Ask Kelly"):
         You question broad claims, reveal limitations, and end with a practical, evidence-based insight.
         Write in the style of a reflective scientist-poet — logical yet lyrical.
         """
-        
-        user_prompt = f"Write a poem about the topic: {topic}"
-        
-        response = openai.ChatCompletion.create(
-            model="gpt-5",  # or 'gpt-4-turbo' if using OpenAI API
+
+        user_prompt = f"Write a poem about: {topic}"
+
+        # ✅ New API style
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",  # or "gpt-4-turbo" if available
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
@@ -38,8 +42,8 @@ if st.button("Ask Kelly"):
             temperature=0.8,
             max_tokens=300
         )
-        
-        poem = response['choices'][0]['message']['content']
+
+        poem = response.choices[0].message.content
         st.markdown(f"### Kelly’s Poem on *{topic.title()}* ✨")
         st.markdown(poem)
     else:
