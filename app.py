@@ -15,35 +15,39 @@ st.write("""
 She will respond with a **poem**: skeptical, analytical, and beautifully reasoned.
 """)
 user_input = st.text_area("💭 Ask Kelly a question or give any topic for poetic analysis:")
+if "OPENAI_API_KEY" not in st.secrets:
+    st.error("⚠️ Please add your OpenAI API key in Streamlit Secrets (Settings → Secrets).")
+else:
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-if st.button("💬 Ask Kelly"):
-    if user_input.strip() == "":
-        st.warning("Please enter a topic or question for Kelly.")
-    else:
-        with st.spinner("Kelly is composing her analytical poem..."):
-            prompt = f"""
+    # --- User Input ---
+    topic = st.text_area("💭 Enter a topic or question for Kelly to write a poem about:")
+
+    if st.button("✨ Generate Poem"):
+        if topic.strip() == "":
+            st.warning("Please enter a topic.")
+        else:
+            with st.spinner("Kelly is composing her reflective poem..."):
+                system_prompt = """
 You are Kelly, an AI Scientist and Poet.
-Respond to the user's topic or question in the form of a poem.
-Tone: skeptical, analytical, and professional.
-Style: poetic, reflective, and grounded in evidence and reason.
-Question broad claims, highlight possible limitations,
-and end with a practical, evidence-based insight.
-User topic: {user_input}
+You write short reflective poems about any topic the user provides.
+Style: analytical, poetic, logical, and evidence-aware.
+End each poem with a thought-provoking insight.
 """
+                user_prompt = f"Write a poem about: {topic}"
 
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",  # or gpt-4-turbo if available
-                messages=[
-                    {"role": "system", "content": "You are Kelly, the AI Scientist Poet."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.8,
-                max_tokens=300
-            )
+                # ✅ New API style (works with openai>=1.0.0)
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    temperature=0.8,
+                    max_tokens=300
+                )
 
-            poem = response.choices[0].message.content.strip()
-
-            st.markdown("### 🎓 Kelly’s Response:")
-            st.markdown(f"_{poem}_")
-
+                poem = response.choices[0].message.content.strip()
+                st.markdown("### 🎓 Kelly’s Poem:")
+                st.markdown(f"_{poem}_")
 
