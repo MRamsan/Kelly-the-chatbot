@@ -3,12 +3,9 @@ import streamlit as st
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-
-# Load API key from .env (optional)
 load_dotenv()
-
-# Initialize OpenAI client
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 st.set_page_config(page_title="Kelly - The AI Scientist Poet", page_icon="🤖📜")
 st.title("🤖 Kelly — The AI Scientist Poet")
@@ -48,3 +45,4 @@ if st.button("Ask Kelly"):
         st.markdown(poem)
     else:
         st.warning("Please enter a topic for Kelly to write about.")
+
