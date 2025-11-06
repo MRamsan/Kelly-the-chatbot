@@ -14,35 +14,36 @@ st.write("""
 *Ask Kelly about anything — science, art, AI, or human nature.*  
 She will respond with a **poem**: skeptical, analytical, and beautifully reasoned.
 """)
+user_input = st.text_area("💭 Ask Kelly a question or give any topic for poetic analysis:")
 
-topic = st.text_area("Enter a topic or question for Kelly:")
-
-if st.button("Ask Kelly"):
-    if topic.strip():
-        system_prompt = """
-        You are Kelly, the AI Scientist Poet.
-        You must respond ONLY in the form of a poem.
-        Every poem should sound skeptical, analytical, and professional in tone.
-        You question broad claims, reveal limitations, and end with a practical, evidence-based insight.
-        Write in the style of a reflective scientist-poet — logical yet lyrical.
-        """
-
-        user_prompt = f"Write a poem about: {topic}"
-
-        # ✅ New API style
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",  # or "gpt-4-turbo" if available
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=0.8,
-            max_tokens=300
-        )
-
-        poem = response.choices[0].message.content
-        st.markdown(f"### Kelly’s Poem on *{topic.title()}* ✨")
-        st.markdown(poem)
+if st.button("💬 Ask Kelly"):
+    if user_input.strip() == "":
+        st.warning("Please enter a topic or question for Kelly.")
     else:
-        st.warning("Please enter a topic for Kelly to write about.")
+        with st.spinner("Kelly is composing her analytical poem..."):
+            prompt = f"""
+You are Kelly, an AI Scientist and Poet.
+Respond to the user's topic or question in the form of a poem.
+Tone: skeptical, analytical, and professional.
+Style: poetic, reflective, and grounded in evidence and reason.
+Question broad claims, highlight possible limitations,
+and end with a practical, evidence-based insight.
+User topic: {user_input}
+"""
+
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",  # or gpt-4-turbo if available
+                messages=[
+                    {"role": "system", "content": "You are Kelly, the AI Scientist Poet."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.8,
+                max_tokens=300
+            )
+
+            poem = response.choices[0].message.content.strip()
+
+            st.markdown("### 🎓 Kelly’s Response:")
+            st.markdown(f"_{poem}_")
+
 
