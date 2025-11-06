@@ -10,10 +10,6 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 st.set_page_config(page_title="Kelly - The AI Scientist Poet", page_icon="🤖📜")
 st.title("🤖 Kelly — The AI Scientist Poet")
 
-st.write("""
-*Ask Kelly about anything — science, art, AI, or human nature.*  
-She will respond with a **poem**: skeptical, analytical, and beautifully reasoned.
-""")
 user_input = st.text_area("💭 Ask Kelly a question or give any topic for poetic analysis:")
 if "OPENAI_API_KEY" not in st.secrets:
     st.error("⚠️ Please add your OpenAI API key in Streamlit Secrets (Settings → Secrets).")
@@ -50,4 +46,5 @@ End each poem with a thought-provoking insight.
                 poem = response.choices[0].message.content.strip()
                 st.markdown("### 🎓 Kelly’s Poem:")
                 st.markdown(f"_{poem}_")
+
 
